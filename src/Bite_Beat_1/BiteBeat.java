@@ -7,6 +7,8 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
@@ -17,12 +19,12 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
-//import Bite_Beat_1.Note.GameSE;
 
-public class BiteBeat extends JFrame {
+public class BiteBeat extends JFrame implements ActionListener{
 
 	private Image titleImage;
 	private Image screenImage;
@@ -30,8 +32,8 @@ public class BiteBeat extends JFrame {
 	private Image rankingBoard = new ImageIcon(Main.class.getResource("../images/Ranking.png")).getImage();
 	private Graphics screenGraphic;
 	private Image background = new ImageIcon(Main.class.getResource("../images/BITE_BEAT_start.jpg")).getImage();
-
-	// main ÆäÀÌÁö
+	
+	// main ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	private ImageIcon menuBarImg = new ImageIcon(Main.class.getResource("../images/MenuBar_.png"));
 	private ImageIcon exitButtonBasicIcon = new ImageIcon(Main.class.getResource("../images/remove.png"));
 	private ImageIcon exitButtonEnteredIcon = new ImageIcon(Main.class.getResource("../images/remove_c.png"));
@@ -86,19 +88,19 @@ public class BiteBeat extends JFrame {
 	
 	private JLabel menuBar = new JLabel(menuBarImg);
 
-	private int mouseX, mouseY; // mouseÀÇ x,yÁÂÇ¥
+	private int mouseX, mouseY; // mouseï¿½ï¿½ x,yï¿½ï¿½Ç¥
 	
-	private boolean isMainScreen = false; // MainÀÌ ¾Æ´Ñ È­¸éÀÌ ¸ÕÀú ³ª¿À±â ¶§¹®¿¡ false
-	private boolean isGameScreen = false; // °ÔÀÓ È­¸éÀ¸·Î ³Ñ¾î¿Ô´ÂÁö¿¡ ´ëÇÑ º¯¼ö
+	private boolean isMainScreen = false; // Mainï¿½ï¿½ ï¿½Æ´ï¿½ È­ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ false
+	private boolean isGameScreen = false; // ï¿½ï¿½ï¿½ï¿½ È­ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ñ¾ï¿½Ô´ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	private static boolean isOverScreen = false;
 		
 	ArrayList<Track> trackList = new ArrayList<Track>();
 	
 	private Image selectedImage; 
 	private Music selectedMusic;
-	private Music intromusic = new Music("introMusic_.mp3", true); // trueÀÌ±â ¶§¹®¿¡ À½¾Ç ½ÇÇà
+	private Music intromusic = new Music("introMusic_.mp3", true); // trueï¿½Ì±ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	
-	private int nowSelected = 0; // Æ®·¢ ¹øÈ£
+	private int nowSelected = 0; // Æ®ï¿½ï¿½ ï¿½ï¿½È£
 	private Graphics2D gameScore_2D;
 	private int togelKey = 0;
 	
@@ -114,52 +116,52 @@ public class BiteBeat extends JFrame {
 		trackList.add(new Track("../albumImage/exo_albumImage.jpg", "../Music/EXO - TEMPO.mp3", "../Music/TEMPO_start.mp3", "EXO - TEMPO", "exo.png"));
 		trackList.add(new Track("../albumImage/twice_albumImage.jpg", "../Music/TWICE - YES OR YES.mp3", "../Music/YES OR YES_start.mp3", "TWICE - YES OR YES", "twice.png"));	
 			
-		setUndecorated(true); // ±âº»ÀûÀ¸·Î Á¸ÀçÇÏ´Â ¸Ş´º¹Ù°¡ ¾Èº¸¿©Áö°Ô µÊ.
-		// setTitle("Bite Beat! ºñÆ®¸¦ ¾Ó~¢½");
+		setUndecorated(true); // ï¿½âº»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½Ş´ï¿½ï¿½Ù°ï¿½ ï¿½Èºï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½.
+		// setTitle("Bite Beat! ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½~ï¿½ï¿½");
 		setSize(Main.SCREEN_WIDTH, Main.SCREEN_HEIGHT);
 		setResizable(false);
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setVisible(true);
-		setBackground(new Color(0, 0, 0, 0)); // È¸»ö -> Èò»ö
-		setLayout(null); // ¹öÆ°ÀÌ³ª JLable°°Àº °É Ãß°¡ÇßÀ» ¶§ Á¤¸» ±× À§Ä¡¿¡ ³Ö¾îÁü	
+		setBackground(new Color(0, 0, 0, 0)); // È¸ï¿½ï¿½ -> ï¿½ï¿½ï¿½
+		setLayout(null); // ï¿½ï¿½Æ°ï¿½Ì³ï¿½ JLableï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ß°ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½ï¿½ ï¿½Ö¾ï¿½ï¿½ï¿½	
 		addKeyListener(new KeyListener());		
 		intromusic.start();
 			
-		// ·¹ÀÌ¾Æ¿ô ¼³Á¤
+		// ï¿½ï¿½ï¿½Ì¾Æ¿ï¿½ ï¿½ï¿½ï¿½ï¿½
 		layeredPane.setBounds(256, 137, 600, 400);
 		layeredPane.setLayout(null);
 					
-		// È¸¿ø°¡ÀÔ-¾ÆÀÌµğ ÇÊµå
+		// È¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½-ï¿½ï¿½ï¿½Ìµï¿½ ï¿½Êµï¿½
 		signup_IdTf.setBounds(212, 200, 400, 52);
-		signup_IdTf.setFont(new Font("210 ºí·Î±× B", Font.PLAIN, 25));
+		signup_IdTf.setFont(new Font("210 ï¿½ï¿½Î±ï¿½ B", Font.PLAIN, 25));
 		layeredPane.add(signup_IdTf);
 		signup_IdTf.setOpaque(false);
 		signup_IdTf.setForeground(Color.white);
 		signup_IdTf.setBorder(javax.swing.BorderFactory.createEmptyBorder());
 		signup_IdTf.setVisible(false);
 		
-		// È¸¿ø°¡ÀÔ-ÆĞ½º¿öµå ÇÊµå
+		// È¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½-ï¿½Ğ½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Êµï¿½
 		signup_pwdTf.setBounds(212, 275, 400, 52);
-		signup_IdTf.setFont(new Font("210 ºí·Î±× B", Font.PLAIN, 25));
+		signup_IdTf.setFont(new Font("210 ï¿½ï¿½Î±ï¿½ B", Font.PLAIN, 25));
 		layeredPane.add(signup_pwdTf);
 		signup_pwdTf.setOpaque(false);
 		signup_pwdTf.setForeground(Color.white);
 		signup_pwdTf.setBorder(javax.swing.BorderFactory.createEmptyBorder());
 		signup_pwdTf.setVisible(false);
 		
-		// È¸¿ø°¡ÀÔ-¾ÆÀÌµğ ÇÊµå
+		// È¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½-ï¿½ï¿½ï¿½Ìµï¿½ ï¿½Êµï¿½
 		login_IdTf.setBounds(212, 200, 400, 52);
-		login_IdTf.setFont(new Font("210 ºí·Î±× B", Font.PLAIN, 25));
+		login_IdTf.setFont(new Font("210 ï¿½ï¿½Î±ï¿½ B", Font.PLAIN, 25));
 		layeredPane.add(login_IdTf);
 		login_IdTf.setOpaque(false);
 		login_IdTf.setForeground(Color.white);
 		login_IdTf.setBorder(javax.swing.BorderFactory.createEmptyBorder());
 		login_IdTf.setVisible(false);
 		
-		// È¸¿ø°¡ÀÔ-ÆĞ½º¿öµå ÇÊµå
+		// È¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½-ï¿½Ğ½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Êµï¿½
 		login_pwdTf.setBounds(212, 275, 400, 52);
-		login_IdTf.setFont(new Font("210 ºí·Î±× B", Font.PLAIN, 25));
+		login_IdTf.setFont(new Font("210 ï¿½ï¿½Î±ï¿½ B", Font.PLAIN, 25));
 		layeredPane.add(login_pwdTf);
 		login_pwdTf.setOpaque(false);
 		login_pwdTf.setForeground(Color.white);
@@ -170,7 +172,7 @@ public class BiteBeat extends JFrame {
 		add(layeredPane);
 		setVisible(true);
 				
-		// search Bar ÇÊµå
+		// search Bar ï¿½Êµï¿½
 		
 		searchPanel.add(searchBarTf);
 		add(searchPanel);
@@ -210,8 +212,8 @@ public class BiteBeat extends JFrame {
 			public void mousePressed(MouseEvent e) {	
 				Music buttonEnteredMusic = new Music("Mouse_click.mp3", false);
 				buttonEnteredMusic.start();
-				// try, catch ¹®Àå ³Ö±â
-				// ·Î±×ÀÎ ¼º°ø ÈÄ ¿Å°ÜÁú °÷
+				// try, catch ï¿½ï¿½ï¿½ï¿½ ï¿½Ö±ï¿½
+				// ï¿½Î±ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Å°ï¿½ï¿½ï¿½ ï¿½ï¿½
 				try {
 					
 				}catch(Exception e1){
@@ -225,14 +227,18 @@ public class BiteBeat extends JFrame {
 				login_pwdTf.setVisible(true);
 				background = new ImageIcon(Main.class.getResource("../images/loginBackground.jpg")).getImage();						
 			}
+			
+			
 		});
+		
+			
 		add(signupFinButton);
 			
 		/*############################*/
 		exitButton.setBounds(1232, 4, 40, 40);
 		exitButton.setBorderPainted(false);
 		exitButton.setContentAreaFilled(false);
-		exitButton.setFocusPainted(false); // ÀÌ ¼¼ ¹­À½À¸·Î png Ã³¸®¸¦ ÇÒ ¼ö ÀÖ´Ù
+		exitButton.setFocusPainted(false); // ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ png Ã³ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ ï¿½Ö´ï¿½
 		exitButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseEntered(MouseEvent e) {
@@ -263,14 +269,14 @@ public class BiteBeat extends JFrame {
 		backButton.setBounds(20, 60, 50, 50);
 		backButton.setBorderPainted(false);
 		backButton.setContentAreaFilled(false);
-		backButton.setFocusPainted(false); // ÀÌ ¼¼ ¹­À½À¸·Î png Ã³¸®¸¦ ÇÒ ¼ö ÀÖ´Ù
+		backButton.setFocusPainted(false); // ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ png Ã³ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ ï¿½Ö´ï¿½
 		backButton.setVisible(false);
 		backButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseEntered(MouseEvent e) { 
 				backButton.setIcon(backButtonEntered);
 				backButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
-				// ¸¶¿ì½º Å¬¸¯ È¿°úÀ½
+				// ï¿½ï¿½ï¿½ì½º Å¬ï¿½ï¿½ È¿ï¿½ï¿½ï¿½ï¿½
 			}
 			
 			@Override
@@ -294,13 +300,13 @@ public class BiteBeat extends JFrame {
 		signupButton.setBounds(390, 480, 130, 130);
 		signupButton.setBorderPainted(false);
 		signupButton.setContentAreaFilled(false);
-		signupButton.setFocusPainted(false); // ÀÌ ¼¼ ¹­À½À¸·Î png Ã³¸®¸¦ ÇÒ ¼ö ÀÖ´Ù
+		signupButton.setFocusPainted(false); // ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ png Ã³ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ ï¿½Ö´ï¿½
 		signupButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseEntered(MouseEvent e) {
 				signupButton.setIcon(signupButtonEntered);
 				signupButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
-				// ¸¶¿ì½º Å¬¸¯ È¿°úÀ½
+				// ï¿½ï¿½ï¿½ì½º Å¬ï¿½ï¿½ È¿ï¿½ï¿½ï¿½ï¿½
 			}
 			
 			@Override
@@ -317,8 +323,8 @@ public class BiteBeat extends JFrame {
 				signupFinButton.setVisible(true);
 				signup_IdTf.setVisible(true);
 				signup_pwdTf.setVisible(true);
-				// try, catch ¹® ³Ö±â
-				// ¸Ş¼¼Áö ¶ç¿ì°í ¹Ù·Î login È­¸éÀ¸·Î ÀüÈ¯ (·Î±×ÀÎ ÇÏ½Ã°Ú½À´Ï±î?)
+				// try, catch ï¿½ï¿½ ï¿½Ö±ï¿½
+				// ï¿½Ş¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ù·ï¿½ login È­ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯ (ï¿½Î±ï¿½ï¿½ï¿½ ï¿½Ï½Ã°Ú½ï¿½ï¿½Ï±ï¿½?)
 				background = new ImageIcon(Main.class.getResource("../images/signinBackground.jpg")).getImage();
 			}
 		});
@@ -328,13 +334,13 @@ public class BiteBeat extends JFrame {
 		loginButton.setBounds(775, 480, 130, 130);
 		loginButton.setBorderPainted(false);
 		loginButton.setContentAreaFilled(false);
-		loginButton.setFocusPainted(false); // ÀÌ ¼¼ ¹­À½À¸·Î png Ã³¸®¸¦ ÇÒ ¼ö ÀÖ´Ù
+		loginButton.setFocusPainted(false); // ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ png Ã³ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ ï¿½Ö´ï¿½
 		loginButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseEntered(MouseEvent e) {
 				loginButton.setIcon(loginButtonEntered);
 				loginButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
-				// ¸¶¿ì½º Å¬¸¯ È¿°úÀ½
+				// ï¿½ï¿½ï¿½ì½º Å¬ï¿½ï¿½ È¿ï¿½ï¿½ï¿½ï¿½
 			}
 			
 			@Override
@@ -360,7 +366,7 @@ public class BiteBeat extends JFrame {
 		leftButton.setBounds(360, 330, 90, 90);
 		leftButton.setBorderPainted(false);
 		leftButton.setContentAreaFilled(false);
-		leftButton.setFocusPainted(false); // ÀÌ ¼¼ ¹­À½À¸·Î png Ã³¸®¸¦ ÇÒ ¼ö ÀÖ´Ù
+		leftButton.setFocusPainted(false); // ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ png Ã³ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ ï¿½Ö´ï¿½
 		leftButton.setVisible(false);
 		leftButton.addMouseListener(new MouseAdapter() {
 			@Override
@@ -386,7 +392,7 @@ public class BiteBeat extends JFrame {
 		rightButton.setBounds(830, 330, 90, 90);
 		rightButton.setBorderPainted(false);
 		rightButton.setContentAreaFilled(false);
-		rightButton.setFocusPainted(false); // ÀÌ ¼¼ ¹­À½À¸·Î png Ã³¸®¸¦ ÇÒ ¼ö ÀÖ´Ù
+		rightButton.setFocusPainted(false); // ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ png Ã³ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ ï¿½Ö´ï¿½
 		rightButton.setVisible(false);
 		rightButton.addMouseListener(new MouseAdapter() {
 			@Override
@@ -413,7 +419,7 @@ public class BiteBeat extends JFrame {
 		easyButton.setBounds(400, 600, 135, 67);
 		easyButton.setBorderPainted(false);
 		easyButton.setContentAreaFilled(false);
-		easyButton.setFocusPainted(false); // ÀÌ ¼¼ ¹­À½À¸·Î png Ã³¸®¸¦ ÇÒ ¼ö ÀÖ´Ù	
+		easyButton.setFocusPainted(false); // ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ png Ã³ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ ï¿½Ö´ï¿½	
 		easyButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseEntered(MouseEvent e) {
@@ -440,7 +446,7 @@ public class BiteBeat extends JFrame {
 		normalButton.setBounds(575, 600, 135, 67);
 		normalButton.setBorderPainted(false);
 		normalButton.setContentAreaFilled(false);
-		normalButton.setFocusPainted(false); // ÀÌ ¼¼ ¹­À½À¸·Î png Ã³¸®¸¦ ÇÒ ¼ö ÀÖ´Ù	
+		normalButton.setFocusPainted(false); // ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ png Ã³ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ ï¿½Ö´ï¿½	
 		normalButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseEntered(MouseEvent e) {
@@ -468,7 +474,7 @@ public class BiteBeat extends JFrame {
 		hardButton.setBounds(750, 600, 135, 67);
 		hardButton.setBorderPainted(false);
 		hardButton.setContentAreaFilled(false);
-		hardButton.setFocusPainted(false); // ÀÌ ¼¼ ¹­À½À¸·Î png Ã³¸®¸¦ ÇÒ ¼ö ÀÖ´Ù	
+		hardButton.setFocusPainted(false); // ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ png Ã³ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ ï¿½Ö´ï¿½	
 		hardButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseEntered(MouseEvent e) {
@@ -495,7 +501,7 @@ public class BiteBeat extends JFrame {
 		starButton.setBounds(870, 140, 50, 50);
 		starButton.setBorderPainted(false);
 		starButton.setContentAreaFilled(false);
-		starButton.setFocusPainted(false); // ÀÌ ¼¼ ¹­À½À¸·Î png Ã³¸®¸¦ ÇÒ ¼ö ÀÖ´Ù	
+		starButton.setFocusPainted(false); // ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ png Ã³ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ ï¿½Ö´ï¿½	
 		starButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseEntered(MouseEvent e) {
@@ -509,7 +515,7 @@ public class BiteBeat extends JFrame {
 					starButton.setIcon(starBasic);
 				}
 			}
-			 // Åä±ÛÅ°´Â ±âº»°ª 0 ^^
+			 // ï¿½ï¿½ï¿½Å°ï¿½ï¿½ ï¿½âº»ï¿½ï¿½ 0 ^^
 			@Override
 			public void mousePressed(MouseEvent e) {
 				Music buttonEnteredMusic = new Music("Mouse_click.mp3", false);
@@ -530,7 +536,7 @@ public class BiteBeat extends JFrame {
 		starListButton.setBounds(1210, 650, 50, 50);
 		starListButton.setBorderPainted(false);
 		starListButton.setContentAreaFilled(false);
-		starListButton.setFocusPainted(false); // ÀÌ ¼¼ ¹­À½À¸·Î png Ã³¸®¸¦ ÇÒ ¼ö ÀÖ´Ù	
+		starListButton.setFocusPainted(false); // ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ png Ã³ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ ï¿½Ö´ï¿½	
 		starListButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseEntered(MouseEvent e) {
@@ -558,7 +564,7 @@ public class BiteBeat extends JFrame {
 		searchButton.setBounds(1218, 60, 50, 50);
 		searchButton.setBorderPainted(false);
 		searchButton.setContentAreaFilled(false);
-		searchButton.setFocusPainted(false); // ÀÌ ¼¼ ¹­À½À¸·Î png Ã³¸®¸¦ ÇÒ ¼ö ÀÖ´Ù	
+		searchButton.setFocusPainted(false); // ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ png Ã³ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ ï¿½Ö´ï¿½	
 		searchButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseEntered(MouseEvent e) {
@@ -583,7 +589,7 @@ public class BiteBeat extends JFrame {
 		gameEndButton.setBounds(1205, 60, 70, 60);
 		gameEndButton.setBorderPainted(false);
 		gameEndButton.setContentAreaFilled(false);
-		gameEndButton.setFocusPainted(false); // ÀÌ ¼¼ ¹­À½À¸·Î png Ã³¸®¸¦ ÇÒ ¼ö ÀÖ´Ù	
+		gameEndButton.setFocusPainted(false); // ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ png Ã³ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ ï¿½Ö´ï¿½	
 		gameEndButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseEntered(MouseEvent e) {
@@ -660,9 +666,9 @@ public class BiteBeat extends JFrame {
 			gameExp(gameLevel, expBar);
 		}
 		paintComponents(g);
-		// Image·Î ¼±¾ğµÈ °ÍÀÌ ¾Æ´Ï¶ó J~ ·Î ¼±¾ğµÈ °ÍµéÀ» ±×·ÁÁÖ´Â ÇÔ¼ö
-		// ¸Ş´º¹Ù¿Í °°Àº °æ¿ì¿¡´Â Ç×»ó °íÁ¤µÇ¾î ÀÖ´Â °ÍÀÌ±â ¶§¹®¿¡
-		// drawImage°¡ ¾Æ´Ñ paintComponents ÇÔ¼ö·Î ÀÌ¿ëÇÑ´Ù.
+		// Imageï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Æ´Ï¶ï¿½ J~ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Íµï¿½ï¿½ï¿½ ï¿½×·ï¿½ï¿½Ö´ï¿½ ï¿½Ô¼ï¿½
+		// ï¿½Ş´ï¿½ï¿½Ù¿ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ì¿¡ï¿½ï¿½ ï¿½×»ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ç¾ï¿½ ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½Ì±ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+		// drawImageï¿½ï¿½ ï¿½Æ´ï¿½ paintComponents ï¿½Ô¼ï¿½ï¿½ï¿½ ï¿½Ì¿ï¿½ï¿½Ñ´ï¿½.
 		try {
 			Thread.sleep(5);
 		}catch(Exception e) {
@@ -764,8 +770,8 @@ public class BiteBeat extends JFrame {
 		starButton.setVisible(true);
 		starListButton.setVisible(true);
 		searchButton.setVisible(true);
-		// ·Î±×ÀÎ ½ÇÆĞÀÇ °æ¿ì -> try, catch ¹®Àå ³Ö±â
-		// ·Î±×ÀÎ ¼º°ø ÈÄ ¿Å°ÜÁú °÷
+		// ï¿½Î±ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ -> try, catch ï¿½ï¿½ï¿½ï¿½ ï¿½Ö±ï¿½
+		// ï¿½Î±ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Å°ï¿½ï¿½ï¿½ ï¿½ï¿½
 		background = new ImageIcon(Main.class.getResource("../images/gameBackground_.png")).getImage();
 		gameExp(gameLevel, expBar);
 		isMainScreen = true;
@@ -850,5 +856,43 @@ public class BiteBeat extends JFrame {
 	public void songList() {
 		
 	}
-
+	
+	/* DB */
+	
+	private void insertMember() {
+		// ì‚¬ìš©ìê°€ ì…ë ¥í•œ ì •ë³´ ì‚½ì…
+		MemberDTO dto = getViewData();
+		MemberDAO dao = new MemberDAO();
+		boolean ok = dao.insertMember(dto);
+		
+		if(ok) {
+			JOptionPane.showMessageDialog(this, "ê°€ì…ì´ ì™„ë£Œë˜ì—ˆìŠµë‹ˆë‹¤.");
+			dispose();
+		} else {
+			JOptionPane.showMessageDialog(this, "ê°€ì…ì´ ì •ìƒì ìœ¼ë¡œ ì²˜ë¦¬ë˜ì§€ ì•Šì•˜ìŠµë‹ˆë‹¤.");
+		}
+	} // insertMember()
+	
+	public MemberDTO getViewData() {
+		// ì‚¬ìš©ìê°€ ì…ë ¥í•œ ì •ë³´ ì‚½ì…
+		MemberDTO dto = new MemberDTO();
+		String id = signup_IdTf.getText();
+		String pwd = signup_pwdTf.getText();
+		
+		// dtoì— ë‹´ê¸°
+		dto.setId(id);
+		dto.setPwd(pwd);
+		
+		return dto;
+	}
+	@Override
+	public void actionPerformed(ActionEvent ae) {
+		if(ae.getSource()==signupFinButton) {
+			insertMember();
+			System.out.println("insertMember í˜¸ì¶œ");
+		} else if(ae.getSource()==loginFinButton) {
+			// loginFin í•˜ê³  ë‚˜ì„œ í˜¸ì¶œí•  í•¨ìˆ˜, Dialogë¡œ ë„ìš°ê±°ë‚˜
+			System.out.println("loginFin í˜¸ì¶œ");
+		}
+	}
 }
